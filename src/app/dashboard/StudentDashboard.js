@@ -11,7 +11,7 @@ export default function StudentDashboard({ user, analytics }) {
       </h2>
       
       {/* Analytics Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      <div className="grid-stats">
         <div className="card" style={{ padding: '1.5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--success)' }}>{analytics?.totalHadir || 0}</span>
           <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Total Hadir</span>
@@ -31,7 +31,7 @@ export default function StudentDashboard({ user, analytics }) {
       </div>
 
       <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>Menu Pintasan</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+      <div className="grid-menu">
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', borderTop: '4px solid var(--primary)' }}>
           <div style={{ padding: '1rem', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: '50%', marginBottom: '1rem' }}>
             <Camera size={32} color="var(--primary)" />
