@@ -1,0 +1,41 @@
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../api/auth/[...nextauth]/route'
+import { redirect } from 'next/navigation'
+import prisma from '@/lib/prisma'
+import ClientSiswaList from './ClientSiswaList'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
+
+export default async function SiswaPage() {
+  const session = await getServerSession(authOptions)
+
+  if (!session || session.user.role !== 'ADMIN') {
+    redirect('/dashboard')
+  }
+
+  const students = await prisma.user.findMany({
+    where: { role: 'STUDENT' },
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      kelas: true,
+      dudika: true
+    },
+    orderBy: { name: 'asc' }
+  })
+
+  return (
+    <div className="container" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
+      <div style={{ marginBottom: '2rem' }}>
+        <Link href="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+          <ArrowLeft size={16} /> Kembali ke Dashboard
+        </Link>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Kelola Data Siswa</h1>
+        <p style={{ color: 'var(--text-muted)' }}>Daftar siswa PKL dan manajemen password.</p>
+      </div>
+
+      <ClientSiswaList initialStudents={students} />
+    </div>
+  )
+}
