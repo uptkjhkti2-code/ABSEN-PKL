@@ -16,13 +16,25 @@ export default function AbsenPage() {
   const [success, setSuccess] = useState('')
 
   useEffect(() => {
-    // Get Location
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        (err) => setError('Gagal mendapatkan lokasi. Pastikan GPS aktif dan diizinkan.'),
-        { enableHighAccuracy: true }
-      )
+      const getPos = (options) => new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, options))
+      
+      const fetchLocation = async () => {
+        try {
+          // Coba dengan akurasi tinggi (biasanya untuk HP)
+          const pos = await getPos({ enableHighAccuracy: true, timeout: 5000, maximumAge: 0 })
+          setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+        } catch (err) {
+          try {
+            // Jika gagal/timeout (biasanya di Laptop), coba tanpa akurasi tinggi
+            const pos = await getPos({ enableHighAccuracy: false, timeout: 10000, maximumAge: 0 })
+            setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+          } catch (err2) {
+            setError('Gagal mendapatkan lokasi. Pastikan GPS/Lokasi aktif dan diizinkan.')
+          }
+        }
+      }
+      fetchLocation()
     } else {
       setError('Browser Anda tidak mendukung deteksi lokasi.')
     }
