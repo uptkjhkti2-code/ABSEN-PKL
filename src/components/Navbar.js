@@ -3,12 +3,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, ClipboardList, Users, LogOut, Camera, History } from 'lucide-react'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 
-export default function Navbar({ role }) {
+export default function Navbar() {
+  const { data: session, status } = useSession()
   const pathname = usePathname()
 
-  if (pathname === '/login') return null
+  if (status === 'loading' || !session || pathname === '/login') return null
+
+  const role = session.user.role
 
   const adminLinks = [
     { href: '/dashboard', label: 'Beranda', icon: <Home size={20} /> },
