@@ -9,10 +9,20 @@ export async function uploadToGoogleDrive(base64Image, fileName) {
       return "https://placeholder.url/gdrive-not-configured"
     }
 
+    let rawKey = process.env.GDRIVE_PRIVATE_KEY || ''
+    // Jika user copy-paste dengan tanda kutip di Vercel, kita bersihkan
+    if (rawKey.startsWith('"') && rawKey.endsWith('"')) {
+      rawKey = rawKey.slice(1, -1)
+    }
+    if (rawKey.startsWith("'") && rawKey.endsWith("'")) {
+      rawKey = rawKey.slice(1, -1)
+    }
+    const privateKey = rawKey.replace(/\\n/g, '\n')
+
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GDRIVE_CLIENT_EMAIL,
-        private_key: process.env.GDRIVE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        private_key: privateKey,
       },
       scopes: ['https://www.googleapis.com/auth/drive.file'],
     })
@@ -49,6 +59,6 @@ export async function uploadToGoogleDrive(base64Image, fileName) {
     return response.data.webViewLink
   } catch (error) {
     console.error("Error uploading to Google Drive:", error)
-    throw new Error("Gagal mengupload foto ke Google Drive")
+    throw new Error(error.message || "Gagal mengupload foto ke Google Drive")
   }
 }
