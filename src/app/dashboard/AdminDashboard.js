@@ -26,12 +26,12 @@ export default function AdminDashboard({ user }) {
           <div style={{ padding: '1rem', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderRadius: '50%', marginBottom: '1rem' }}>
             <Users size={32} color="var(--primary)" />
           </div>
-          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Kelola Siswa</h3>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Kelola Pengguna</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-            Manajemen akun siswa dan reset password.
+            Manajemen akun Siswa dan Admin.
           </p>
-          <Link href="/siswa" className="btn btn-outline" style={{ width: '100%' }}>
-            Lihat Data Siswa
+          <Link href="/users" className="btn btn-outline" style={{ width: '100%' }}>
+            Lihat Data Pengguna
           </Link>
         </div>
 
