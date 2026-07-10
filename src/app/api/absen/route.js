@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth/[...nextauth]/route'
 import prisma from '@/lib/prisma'
-import { uploadToGoogleDrive } from '@/lib/gdrive'
 
 export async function POST(req) {
   try {
@@ -39,16 +38,12 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Anda sudah melakukan absensi hari ini' }, { status: 400 })
     }
 
-    // Upload ke GDrive
-    const fileName = `absen_${session.user.username}_${new Date().getTime()}.jpg`
-    const photoUrl = await uploadToGoogleDrive(photo, fileName)
-
-    // Simpan ke database
+    // Simpan ke database (Langsung simpan base64 ke photoUrl)
     const attendance = await prisma.attendance.create({
       data: {
         userId: session.user.id,
         status: 'HADIR',
-        photoUrl,
+        photoUrl: photo,
         latitude,
         longitude
       }
