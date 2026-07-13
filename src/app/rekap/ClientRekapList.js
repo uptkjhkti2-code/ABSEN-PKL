@@ -1,13 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, MapPin, Image as ImageIcon, X, Download } from 'lucide-react'
+import { Search, MapPin, Image as ImageIcon, X, Download, Trash2 } from 'lucide-react'
 
 export default function ClientRekapList({ initialData }) {
   const [data, setData] = useState(initialData)
   const [search, setSearch] = useState('')
   const [filterBulan, setFilterBulan] = useState('')
   const [modalPhoto, setModalPhoto] = useState(null)
+
+  const handleDelete = async (id) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus data absen ini?')) return
+
+    try {
+      const res = await fetch(`/api/rekap/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setData(data.filter(item => item.id !== id))
+      } else {
+        alert('Gagal menghapus data')
+      }
+    } catch (err) {
+      alert('Terjadi kesalahan saat menghapus data')
+    }
+  }
 
   // Filter logika
   const filteredData = data.filter(item => {
@@ -106,6 +121,9 @@ export default function ClientRekapList({ initialData }) {
                         <MapPin size={16} />
                       </a>
                     )}
+                    <button onClick={() => handleDelete(item.id)} className="btn btn-outline" style={{ padding: '0.4rem', color: 'var(--danger)', borderColor: 'var(--danger)' }} title="Hapus Data">
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </td>
               </tr>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, ClipboardList, Users, LogOut, Camera, History } from 'lucide-react'
+import { Home, ClipboardList, Users, LogOut, Camera, History, Calendar } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 
 export default function Navbar() {
@@ -17,6 +17,7 @@ export default function Navbar() {
     { href: '/dashboard', label: 'Beranda', icon: <Home size={20} /> },
     { href: '/rekap', label: 'Rekap Data', icon: <ClipboardList size={20} /> },
     { href: '/users', label: 'Pengguna', icon: <Users size={20} /> },
+    { href: '/holidays', label: 'Hari Libur', icon: <Calendar size={20} /> },
   ]
 
   const studentLinks = [

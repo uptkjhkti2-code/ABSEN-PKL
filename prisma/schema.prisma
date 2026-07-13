@@ -46,3 +46,17 @@ enum Status {
   IZIN
   ALPHA
 }
+
+model Holiday {
+  id          String   @id @default(cuid())
+  date        DateTime @unique
+  description String
+  createdAt   DateTime @default(now())
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

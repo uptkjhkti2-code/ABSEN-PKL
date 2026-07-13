@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import AdminDashboard from './AdminDashboard'
 import StudentDashboard from './StudentDashboard'
 
+import { checkAndGenerateAlphas } from '@/lib/generateAlpha'
 import prisma from '@/lib/prisma'
 
 export default async function DashboardPage() {
@@ -12,6 +13,10 @@ export default async function DashboardPage() {
   if (!session) {
     redirect('/login')
   }
+  
+  // Trigger Alpha generation on every dashboard load
+  // It uses an internal system log to ensure it only scans once a day
+  await checkAndGenerateAlphas()
 
   let analytics = {}
 
