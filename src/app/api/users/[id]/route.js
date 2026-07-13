@@ -10,7 +10,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = params
+    const resolvedParams = await params
+    const { id } = resolvedParams
     const { username, name, role, kelas, dudika } = await req.json()
 
     if (!username || !name || !role) {
@@ -56,7 +57,8 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { id } = params
+    const resolvedParams = await params
+    const { id } = resolvedParams
 
     // Cek apakah menghapus diri sendiri
     if (session.user.id === id) {
