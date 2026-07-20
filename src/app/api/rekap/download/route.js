@@ -30,12 +30,34 @@ export async function GET() {
     
     // Pertama, kumpulkan semua tanggal unik dari semua attendances
     const allDates = new Set()
+    let minDate = new Date()
+    let hasRecord = false
+
     users.forEach(u => {
       u.attendances.forEach(a => {
+        hasRecord = true
+        if (a.date < minDate) {
+          minDate = new Date(a.date)
+        }
         const dateStr = a.date.toISOString().split('T')[0]
         allDates.add(dateStr)
       })
     })
+
+    // Tambahkan semua tanggal dari minDate sampai hari ini (agar weekend & libur tanpa absen tetap punya kolom)
+    const nowWIB = new Date(new Date().getTime() + (7 * 60 * 60 * 1000))
+    if (hasRecord) {
+      let currentDate = new Date(minDate)
+      currentDate.setUTCHours(0,0,0,0)
+      
+      const endDate = new Date(nowWIB)
+      endDate.setUTCHours(0,0,0,0)
+      
+      while (currentDate <= endDate) {
+        allDates.add(currentDate.toISOString().split('T')[0])
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+    }
 
     const sortedDates = Array.from(allDates).sort()
 
