@@ -21,6 +21,9 @@ export async function GET() {
       orderBy: { name: 'asc' }
     })
 
+    const holidays = await prisma.holiday.findMany()
+    const holidayDates = holidays.map(h => h.date.toISOString().split('T')[0])
+
     // Untuk kesederhanaan, kita ambil bulan ini saja, atau 30 hari terakhir.
     // Mari kita buat semua data yang ada saja (flatten).
     // Idealnya ada filter bulan/tahun, tapi untuk MVP kita export semua tanggal.
@@ -49,12 +52,29 @@ export async function GET() {
         userAttendances[dateStr] = a.status
       })
 
-      sortedDates.forEach(date => {
-        const status = userAttendances[date]
-        let symbol = 'A' // Default Alpha jika tidak ada record
-        if (status === 'HADIR') symbol = 'V'
-        if (status === 'SAKIT') symbol = 'S'
-        if (status === 'IZIN') symbol = 'I'
+      sortedDates.forEach(dateStr => {
+        const status = userAttendances[dateStr]
+        let symbol = ''
+        
+        // Cek apakah tanggal ini weekend atau libur
+        const d = new Date(dateStr)
+        const dayOfWeek = d.getUTCDay() // 0 = Minggu, 6 = Sabtu
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+        const isHoliday = holidayDates.includes(dateStr)
+
+        if (status) {
+          if (status === 'HADIR') symbol = 'V'
+          else if (status === 'SAKIT') symbol = 'S'
+          else if (status === 'IZIN') symbol = 'I'
+          else if (status === 'ALPHA') symbol = 'A'
+        } else {
+          // Jika tidak ada record absen
+          if (isWeekend || isHoliday) {
+            symbol = 'LIBUR'
+          } else {
+            symbol = 'A'
+          }
+        }
         
         row += `,${symbol}`
       })

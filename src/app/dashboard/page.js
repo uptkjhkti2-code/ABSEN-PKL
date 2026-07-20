@@ -24,14 +24,30 @@ export default async function DashboardPage() {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     
-    const [totalStudents, todayHadir, todaySakit, todayIzin] = await Promise.all([
+    const [totalStudents, todayHadir, todaySakit, todayIzin, holidays] = await Promise.all([
       prisma.user.count({ where: { role: 'STUDENT' } }),
       prisma.attendance.count({ where: { status: 'HADIR', date: { gte: today } } }),
       prisma.attendance.count({ where: { status: 'SAKIT', date: { gte: today } } }),
-      prisma.attendance.count({ where: { status: 'IZIN', date: { gte: today } } })
+      prisma.attendance.count({ where: { status: 'IZIN', date: { gte: today } } }),
+      prisma.holiday.findMany()
     ])
     
-    analytics = { totalStudents, todayHadir, todaySakit, todayIzin, todayAlpha: totalStudents - (todayHadir + todaySakit + todayIzin) }
+    // Cek weekend dan libur (dalam WIB)
+    const now = new Date()
+    const todayWIB = new Date(now.getTime() + (7 * 60 * 60 * 1000))
+    const dayOfWeek = todayWIB.getUTCDay()
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+    const todayStr = todayWIB.toISOString().split('T')[0]
+    
+    const holidayDates = holidays.map(h => h.date.toISOString().split('T')[0])
+    const isHoliday = holidayDates.includes(todayStr)
+
+    let todayAlpha = totalStudents - (todayHadir + todaySakit + todayIzin)
+    if (isWeekend || isHoliday) {
+      todayAlpha = 'LIBUR'
+    }
+
+    analytics = { totalStudents, todayHadir, todaySakit, todayIzin, todayAlpha }
   } else {
     const [totalHadir, totalSakit, totalIzin, totalAlpha] = await Promise.all([
       prisma.attendance.count({ where: { userId: session.user.id, status: 'HADIR' } }),

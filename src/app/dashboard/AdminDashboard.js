@@ -25,7 +25,9 @@ export default function AdminDashboard({ user, analytics }) {
           <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Izin & Sakit</span>
         </div>
         <div className="card" style={{ padding: '1.5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--danger)' }}>{Math.max(0, analytics?.todayAlpha || 0)}</span>
+          <span style={{ fontSize: '2rem', fontWeight: 'bold', color: analytics?.todayAlpha === 'LIBUR' ? 'var(--success)' : 'var(--danger)' }}>
+            {analytics?.todayAlpha === 'LIBUR' ? 'LIBUR' : Math.max(0, analytics?.todayAlpha || 0)}
+          </span>
           <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Belum Absen (Alpha)</span>
         </div>
       </div>
